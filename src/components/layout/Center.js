@@ -3,21 +3,37 @@ import { Button, Grid, Image, Text } from "../../elements";
 import { history } from "../../redux/configureStore";
 import { useDispatch, useSelector} from "react-redux";
 import { actionCreators as postActions } from "../../redux/modules/post";
+import { getDatabase, ref, onValue, update } from "firebase/database";
 import { FaHeart } from "react-icons/fa";
 
 
 const Center = (props) => {
   const dispatch = useDispatch();
   const user_info = useSelector((state) => state.user.user);
-  const [is_like, setLike] = React.useState(false);  // 좋아요 초기값
+  const [like, setLike] = React.useState(false);  // 좋아요 초기값
 
-  const Like = () => {
-    console.log(is_like);
-    console.log(props.id);
-    setLike(is_like => !is_like);
-    if(is_like){
-        //dispatch(postActions.favoriteFB(props.id, user_info.uid));
-    }    
+  let login_user = useSelector((state) => state.user.user);
+  login_user = login_user !== null ? login_user.uid : login_user;
+
+  React.useEffect(() => {
+    if (user_info?.uid) {
+      const db = getDatabase();
+      const likeRef = ref(db, `like/${props.id}/${user_info.uid}`);
+
+      onValue(likeRef, (snapshot) => {
+        if (snapshot.val()) {
+          setLike(snapshot.val()?.state);
+        } else {
+          update(likeRef, { state: false });
+        }
+      });
+    } else {
+      return false;
+    }
+  }, [user_info]);
+
+  const likeAction = () => {
+    dispatch(postActions.likeFB(props.id, like, props.like_cnt));
   };
 
   return (
@@ -73,7 +89,7 @@ const Center = (props) => {
         <Grid is_flex padding="16px">
           <Grid>
             <Text bold inline_block margin="1em 5px 1em 0">
-                좋아요 {props.comment_cnt}개
+                좋아요 {props.like_cnt}개
             </Text>
             <Text bold inline_block>
               댓글 {props.comment_cnt}개
@@ -83,9 +99,9 @@ const Center = (props) => {
           <Button            
             width="40px" 
             bg="transparent" 
-            color={is_like ? "gray" : "red"}
+            color={like ? "red" : "gray"}
             size="25px"
-           _onClick={Like}
+            _onClick={likeAction}
         ><FaHeart/></Button>
         </Grid>
       </Grid>

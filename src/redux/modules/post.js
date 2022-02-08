@@ -3,8 +3,15 @@ import { produce } from "immer";
 import "moment";
 import moment from "moment";
 import { firestore, storage } from "../../shared/firebase";
-import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
-import { doc, updateDoc, deleteDoc, query, orderBy, limit, startAt} from "firebase/firestore";
+import { getStorage, ref, uploadString, getDownloadURL} from "firebase/storage";
+import { doc, updateDoc, deleteDoc, query, orderBy, limit, startAt, increment} from "firebase/firestore";
+import { getDatabase,
+    ref as reref,
+    onValue,
+    child,
+    update,
+    set,
+    push, } from "firebase/database";
 import {actionCreators as imageActions} from "./image";
 
 const SET_POST = "SET_POST";
@@ -25,6 +32,7 @@ const initialPost = {
     image_url: "http://cdn.edujin.co.kr/news/photo/202102/35063_66368_1421.jpg",
     contents: "",
     comment_cnt: 0,
+    like_cnt:0,
     insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
     layout: "center",
 };
@@ -204,6 +212,25 @@ const deletePostFB = (post_id = null, post_list = []) => {
     }
 };
 
+const likeFB = (post_id, state = false, like_cnt) => {
+    return function (dispatch, getState, { history }) {
+        const user = getState().user.user.uid;
+
+        const redb = getDatabase();
+        const dbRef = reref(redb, `like/${post_id}/${user}`);
+        const postDB = firestore.collection("post");
+
+        set(dbRef, {
+            state: !state,
+        }).then(() => {
+            const postDoc = doc(postDB, post_id);
+            updateDoc(postDoc, { like_cnt: increment(state ? -1 : 1) }).then(() => {
+                dispatch(editPost(post_id, { like_cnt: like_cnt + (state ? -1 : 1) }));
+            });
+        });
+    };
+};
+
 //아이템 인덱스
 
 
@@ -249,6 +276,7 @@ const actionCreators = {
     editPostFB,
     getOnePostFB,
     deletePostFB,
+    likeFB,
 };
 
 export {actionCreators};

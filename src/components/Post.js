@@ -38,9 +38,10 @@ Post.defaultProps = {
   },
   image_url: "http://cdn.edujin.co.kr/news/photo/202102/35063_66368_1421.jpg",
   contents: "스폰지밥이네여!",
-  comment_cnt: 10,
+  comment_cnt: 0,
   insert_dt: "2021-02-27 10:00:00",
   is_me: false,
+  like_cnt: 0,
 };
 
 export default Post;
