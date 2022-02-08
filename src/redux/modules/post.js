@@ -2,16 +2,17 @@ import { createAction, handleActions } from "redux-actions";
 import { produce } from "immer";
 import "moment";
 import moment from "moment";
-import { firestore, storage } from "../../shared/firebase";
+import { firestore, storage, db } from "../../shared/firebase";
 import { getStorage, ref, uploadString, getDownloadURL} from "firebase/storage";
-import { doc, updateDoc, deleteDoc, query, orderBy, limit, startAt, increment} from "firebase/firestore";
+import { collection, doc, addDoc, updateDoc, deleteDoc, query, orderBy, limit, startAt, increment} from "firebase/firestore";
 import { getDatabase,
     ref as reref,
     onValue,
     child,
     update,
     set,
-    push, } from "firebase/database";
+    push, 
+} from "firebase/database";
 import {actionCreators as imageActions} from "./image";
 
 const SET_POST = "SET_POST";
@@ -73,9 +74,9 @@ const getPostFB = () => {
     };
 };
 
-const addPostFB = (contents = "", layout = "center") => {
-    return function(dispatch, getState, {history}){
-        const postDB = firestore.collection("post");        
+const addPostFB = (contents="", layout="center") => {
+    return async function(dispatch, getState, {history}){
+        const postDB = firestore.collection("post"); 
         const _user = getState().user.user;       
 
         const user_info = {
@@ -102,11 +103,10 @@ const addPostFB = (contents = "", layout = "center") => {
                 dispatch(imageActions.uploadImage(url));
                 return url;
             }).then((url)=>{
-                postDB.add({...user_info,..._post, image_url: url}).then((doc)=>{
+                addDoc(collection(db, "post"), {...user_info,..._post, image_url: url}).then((doc)=>{
                     let post = {user_info, ..._post, id: doc.id, image_url: url};
                     dispatch(addPost(post));
-                    history.replace("/");
-                    history.go(0);
+                    history.replace("/");    
                 }).catch((error)=>{
                     console.log('포스트 작성 실패', error);
                 });
@@ -189,14 +189,15 @@ const getOnePostFB = (id) => {
 
 
 const deletePostFB = (post_id = null, post_list = []) => {
-    return function async(dispatch, getState, {history}) {
+    return async function (dispatch, getState, {history}) {
         if (!post_id) {
             window.alert("게시물을 불러올 수 없습니다.");
             console.log("delete reducer 오류");
             return;
         }
 
-        const postDB = firestore.collection("post");
+        //const postDB = firestore.collection("post");
+
         const post_index = getState().post.list.findIndex(
             (item) => item.id === post_id
           );
@@ -204,7 +205,7 @@ const deletePostFB = (post_id = null, post_list = []) => {
             return index !== post_index;
         });
         
-        deleteDoc(postDB,post_id).then(
+        deleteDoc(doc(db, "post",post_id)).then(
             history.replace("/"), dispatch(deletePost(_post))
         ).catch((error) => 
             console.log(error , "포스트삭제 에러")

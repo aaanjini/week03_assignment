@@ -26,6 +26,7 @@ const PostWrite = (props) => {
 
     const [contents, setContents] = React.useState(_post ? _post.contents : "");
     const [layout, setLayout] = React.useState("center");
+    
     React.useEffect(() => {
       if (is_edit && !_post) { //수정하기 페이지인데 포스트정보가 없을 경우
         console.log("포스트 정보가 없어요!");
@@ -48,7 +49,7 @@ const PostWrite = (props) => {
     };
 
     const addPost = () => {
-      dispatch(postActions.addPostFB(contents));
+      dispatch(postActions.addPostFB(contents,layout));
 
     };
 

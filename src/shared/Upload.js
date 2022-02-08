@@ -16,8 +16,6 @@ const Upload = (props) => {
     const selectFile = (e) => {
         const reader = new FileReader();
         const file = e.target.files[0];
-        
-        console.log(file.name);
 
         //디자인 커스텀 인풋에 value 넣기
         document.querySelector('.upload-name').value = file.name;

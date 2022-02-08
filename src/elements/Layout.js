@@ -5,7 +5,7 @@ import { Grid, Image, Text } from "../elements/index";
 
 const Layout = (props) => {
     const { children, layout, contents, preview } = props;
-    console.log();
+    
     if(layout === "center"){
         return(
             <>
@@ -18,23 +18,29 @@ const Layout = (props) => {
             </>            
         );
     }else if(layout === "left"){        
-        <Grid is_flex  padding="16px"> 
-            <Grid width="40%">
-                <Text>{contents}</Text>
-            </Grid>             
-            <Grid width="60%" margin="0 0 0 10px">                
-                <Image shape="rectangle" src={preview} />              
-            </Grid>                
-        </Grid>        
-    }else if(layout === "right"){
-        <Grid is_flex  padding="16px">
-            <Grid width="60%" >                
-                <Image shape="rectangle" src={preview} />
-            </Grid>  
-            <Grid width="40%" margin="0 0 0 10px">
-                <Text>{contents}</Text>
+        return(
+            <Grid is_flex  padding="16px"> 
+                <Grid width="40%">
+                    <Text>{contents}</Text>
+                </Grid>             
+                <Grid width="60%" margin="0 0 0 10px">                
+                    <Image shape="rectangle" src={preview} />              
+                </Grid>                
             </Grid>
-        </Grid>
+        );
+            
+    }else if(layout === "right"){
+        return(
+            <Grid is_flex  padding="16px">
+                <Grid width="60%" >                
+                    <Image shape="rectangle" src={preview} />
+                </Grid>  
+                <Grid width="40%" margin="0 0 0 10px">
+                    <Text>{contents}</Text>
+                </Grid>
+            </Grid>
+        );
+        
     }
 }
 

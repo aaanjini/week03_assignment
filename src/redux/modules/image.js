@@ -31,7 +31,7 @@ const uploadImageFB = (image) => {
             });
             
         }).catch((error)=>{
-            console.log('이미지 업로드 실패',error);
+            console.log('이미지 업로드 실패 ',error);
             dispatch(uploading(false));
         });
     }
