@@ -1,5 +1,5 @@
 import React from "react";
-import {Grid, Text, Button, Image, Input} from "../elements";
+import {Grid, Text, Button, Image, Input, Layout} from "../elements";
 import Upload from "../shared/Upload";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -96,46 +96,16 @@ const PostWrite = (props) => {
               <input type="radio" value="right" name="layout" onClick={changeLayout}></input>
               오른쪽
             </label>
-          </Grid>          
+          </Grid>     
+
+
           {layout === "center" ? (
-            <>            
-              <Grid margin="0 0 20px 0">
-                <Image 
-                  shape="rectangle" 
-                  src={preview ? preview : "http://via.placeholder.com/400x300"}
-                />
-                <Text>중앙 레이아웃</Text>
-              </Grid>
-            </>
-          ) : layout === "right" ? (
-            <> 
-              <Grid is_flex  margin="0 0 20px 0" >              
-                <Grid width="60%" >                
-                  <Image                     
-                    shape="rectangle" 
-                    src={preview ? preview : "http://via.placeholder.com/400x300"}
-                  />                 
-                </Grid>
-                <Grid width="40%">
-                  <Text margin="0 0 0 10px">오른쪽 레이아웃</Text>
-                </Grid>
-              </Grid>  
-            </>
+            <Layout contents={contents? contents : "중앙 레이아웃 미리보기"} preview={preview ? preview : "http://via.placeholder.com/400x300"} layout="center"/>
+          ) : layout === "right" ? (            
+            <Layout contents={contents? contents : "오른쪽 레이아웃 미리보기"} preview={preview ? preview : "http://via.placeholder.com/400x300"} layout="right"/>            
           ) : (
-            <> 
-              <Grid is_flex  margin="0 0 20px 0" > 
-                <Grid width="40%">
-                  <Text margin="0 0 0 10px">왼쪽 레이아웃</Text>
-                </Grid>             
-                <Grid width="60%" >                
-                  <Image                     
-                    shape="rectangle" 
-                    src={preview ? preview : "http://via.placeholder.com/400x300"}
-                  />                 
-                </Grid>                
-              </Grid>  
-            </>
-          )}          
+            <Layout contents={contents? contents : "왼쪽 레이아웃 미리보기"} preview={preview ? preview : "http://via.placeholder.com/400x300"} layout="left"/>
+          )}      
 
           <Grid margin="0 0 20px 0">
             <Input 
