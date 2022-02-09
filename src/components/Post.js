@@ -45,7 +45,7 @@ const Post = (props) => {
             <Text bold>{props.user_info.user_name}</Text>
           </Grid>
           <Grid is_flex width="auto">
-            <Text>{props.insert_dt}</Text>
+            <Text size="12px" color="#999">{props.insert_dt}</Text>
             {props.is_me && (
               <Button
                 text="수정"
